@@ -1,820 +1,6 @@
 <!DOCTYPE html>
-<html lang="en"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
-        window.__firebase_config = firebaseConfig;
-        window.__initial_auth_token = initialAuthToken;
-        window.__app_id = appId;
-            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIwNzQ4ODMzODIxMzE4MDc0MzUyOSIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjX2UxMmVhMWE1Mjg4N2U1M2NfaW5kZXguaHRtbC00ODQifSwiZXhwIjoxNzk0OTgwNTcyLCJpYXQiOjE3OTQ5NzY5NzIsImFsZyI6IlJTMjU2In0.o4PD3Uqds7PvbbwqtRKOweOr8iL22HapgVU-HodHOXFiSAEXaLAleBqOLzbkBeaSUW0r_erRdgbZRMtubAql9y3i7aNu9pB1Vh2YShKV5fbR_01WlXqRYlf8MIxXqP7SIOV3WMdcnlhhVOMnshh2RGer6LbGarmx6bsWTrpyDyClNzjwmzC0IOpC3gG3i2eBNyqBrVfzkHAdyskwhSSjZBRjtP7Ir3lEK5hfUWbfRMF0lKPFo_QpQNIFCYps-XeJDOs9WoOuMipt_nP4iH8tP1cGuGeQgWRENbB8Oxed39mfmAYWnepflgN5dlp5Hwh-qsmIQ3P6lbSUviH7RWQM7A","c_e12ea1a52887e53c_index.html-484")</script><script data-bard-client-injected="true">
-  document.addEventListener('input', (event) => {
-    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
-      const clonedDoc = document.cloneNode(true);
-      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
-      injectedScripts.forEach(el => el.remove());
-      window.parent.postMessage({
-        type: 'inlineEdit',
-        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
-      }, '*');
-    }
-  });
-</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
-</script><script data-bard-client-injected="true">(function() {
-  const SCROLL_KEYS = new Set([
-    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
-    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
-  ]);
-  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
-
-  function isTextEntryTarget(target) {
-    if (!target) return false;
-    const tagName = target.tagName;
-    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
-        tagName === 'SELECT' || target.isContentEditable === true;
-  }
-
-  // An element absorbs the key only if it both overflows on the axis being
-  // scrolled and is configured to scroll on that axis. The cheap dimension
-  // test runs first because getComputedStyle forces a style recalc, and this
-  // runs on every keypress. Each axis is read from its own longhand: the
-  // 'overflow' shorthand serializes as two values when the axes differ, which
-  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
-  function canScroll(node, horizontal) {
-    const overflows = horizontal ? node.scrollWidth > node.clientWidth
-                                 : node.scrollHeight > node.clientHeight;
-    if (!overflows) return false;
-    const style = window.getComputedStyle(node);
-    const overflow = horizontal ? style.overflowX : style.overflowY;
-    return overflow === 'auto' || overflow === 'scroll';
-  }
-
-  // Walks up from the event target so nested scrollers keep their behavior.
-  // <body> is included because pages that pin the root height make it the
-  // scroll container.
-  function hasScrollableAncestor(target, horizontal) {
-    let node = target;
-    while (node && node !== document.documentElement) {
-      if (canScroll(node, horizontal)) return true;
-      node = node.parentElement;
-    }
-    return false;
-  }
-
-  function rootCanScroll(horizontal) {
-    const scroller = document.scrollingElement || document.documentElement;
-    if (!scroller) return false;
-    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
-    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
-                      : scroller.scrollHeight > window.innerHeight + 1;
-  }
-
-  window.addEventListener('keydown', function(event) {
-    if (!SCROLL_KEYS.has(event.key)) return;
-    if (event.defaultPrevented) return;
-    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
-    // reserved for shortcuts, so none of them are scroll intent.
-    if (event.altKey || event.metaKey || event.ctrlKey) return;
-
-    const target = event.target;
-    if (isTextEntryTarget(target)) return;
-
-    // Anything that can still absorb the scroll gets to keep it.
-    const horizontal = HORIZONTAL_KEYS.has(event.key);
-    if (rootCanScroll(horizontal)) return;
-    if (hasScrollableAncestor(target, horizontal)) return;
-
-    event.preventDefault();
-  }, {capture: true, passive: false});
-})();</script><script data-bard-client-injected="true">(function() {
-  // Ensure this script is executed only once
-  if (window.firebaseAuthBridgeScriptLoaded) {
-    return;
-  }
-  window.firebaseAuthBridgeScriptLoaded = true;
-
-  let nextTokenPromiseId = 0;
-
-  // Stores { resolve, reject } for ongoing token requests
-  const pendingTokenPromises = {};
-
-  // Listen for messages from the Host Application
-  window.addEventListener('message', function(event) {
-
-    const messageData = event.data;
-
-  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
-      const { success, token, error, promiseId } = messageData ?? {};
-      if (pendingTokenPromises[promiseId]) {
-        if (success) {
-          pendingTokenPromises[promiseId].resolve(token);
-        } else {
-          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
-        }
-        delete pendingTokenPromises[promiseId];
-      }
-    }
-  });
-
-  // Expose a function for the Generated App to request a new Firebase token
-  window.requestNewFirebaseToken = function() {
-    const currentPromiseId = nextTokenPromiseId++;
-    const promise = new Promise((resolve, reject) => {
-      pendingTokenPromises[currentPromiseId] = { resolve, reject };
-    });
-    if (window.parent && window.parent !== window) {
-      window.parent.postMessage({
-        type: 'REQUEST_NEW_FIREBASE_TOKEN',
-        promiseId: currentPromiseId
-      }, '*');
-    } else {
-      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
-      delete pendingTokenPromises[currentPromiseId];
-    }
-    return promise;
-  };
-})();</script><script data-bard-client-injected="true">
-let realOriginalGetUserMedia = null;
-if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
-}
-
-(function() {
-  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
-    try {
-      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
-        get: function() {
-          return undefined; // Or throw an error
-        },
-        configurable: false
-      });
-    } catch (error) {
-      console.error("Error defining prototype getter:", error);
-    }
-  }
-})();
-
-(function() {
-  const pendingMediaResolvers = {};
-  let nextMediaPromiseId = 0;
-
-  function requestMediaPermissions(constraints) {
-    const mediaPromiseId = nextMediaPromiseId++;
-    const promise = new Promise((resolve, reject) => {
-      pendingMediaResolvers[mediaPromiseId] = (granted) => {
-        delete pendingMediaResolvers[mediaPromiseId];
-        resolve(granted);
-      };
-    });
-
-    window.parent.postMessage({
-      type: 'requestMediaPermission',
-      constraints: constraints,
-      promiseId: mediaPromiseId,
-    }, '*');
-
-    return promise;
-  }
-
-  let originalGetUserMedia = realOriginalGetUserMedia;
-
-  function interceptGetUserMedia() {
-    if (navigator.mediaDevices) {
-      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
-        value: function(constraints) {
-          return requestMediaPermissions(constraints).then((granted) => {
-            if (granted) {
-              if (originalGetUserMedia) {
-                return originalGetUserMedia(constraints);
-              } else {
-                throw new Error("Original getUserMedia not available.");
-              }
-            } else {
-              throw new DOMException('Permission denied', 'NotAllowedError');
-            }
-          });
-        },
-        writable: false,
-        configurable: false
-      });
-    }
-  }
-
-  interceptGetUserMedia();
-
-  const observer = new MutationObserver(function(mutationsList, observer) {
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
-        interceptGetUserMedia();
-      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
-        interceptGetUserMedia();
-      } else if (mutation.type === 'childList' && mutation.addedNodes) {
-        mutation.addedNodes.forEach(node => {
-          if (node === navigator.mediaDevices) {
-            interceptGetUserMedia();
-          }
-        });
-      }
-    }
-  });
-
-  function interceptSpeechRecognition() {
-    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
-      return;
-    }
-
-    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-    const SpeechRecognitionWrapper = function(...args) {
-      const recognizer = new OriginalSpeechRecognition(...args);
-      const originalStart = recognizer.start.bind(recognizer);
-
-      recognizer.start = function() {
-        requestMediaPermissions({ audio: true }).then(granted => {
-          if (granted) {
-            originalStart();
-          } else {
-            const errorEvent = new SpeechRecognitionErrorEvent('error');
-            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
-            recognizer.dispatchEvent(errorEvent);
-          }
-        });
-      };
-
-      return recognizer;
-    };
-
-    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
-    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
-
-    if (window.SpeechRecognition) {
-      window.SpeechRecognition = SpeechRecognitionWrapper;
-    }
-    if (window.webkitSpeechRecognition) {
-      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
-    }
-  }
-
-  interceptSpeechRecognition();
-
-  window.addEventListener('message', function(event) {
-    if (event.data) {
-      if (event.data.type === 'resolveMediaPermission') {
-        const { promiseId, granted } = event.data;
-        if (pendingMediaResolvers[promiseId]) {
-          pendingMediaResolvers[promiseId](granted);
-        }
-      }
-    }
-  });
-
-})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
-function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
-
- Copyright The Closure Library Authors.
- SPDX-License-Identifier: Apache-2.0
-*/
-function A(b,d){function e(){}e.prototype=d.prototype;b.i=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
-let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
-null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.extensions="";var l=0,t=null,r=null,q=[],F=new TextEncoder,
-G=new TextDecoder;c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*
-16|0;return(f==="x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;
-(g=t)==null||g.postMessage(a)}};Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
-(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
-url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
-</script><script data-bard-client-injected="true">((function(modelInformation) {
-  const originalFetch = window.fetch;
-  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
-  let googleLlmBaseApiUrls = [
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
-    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
-  ];
-  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-    );
-  });
-  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
-    googleLlmBaseApiUrls.push(
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
-    );
-  });
-
-  const pendingFetchResolvers = {};
-  let nextPromiseId = 0;
-
-  function handleStringInput(input, optionsArgument) {
-    const actualUrl = input;
-    const fetchCallArgs = [actualUrl, optionsArgument];
-    const effectiveOptions = optionsArgument || {};
-    const bodyForApiKeyCheck = effectiveOptions.body;
-    const bodyForPostMessage = effectiveOptions.body;
-    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
-  }
-
-  function handleRequestInput(input, optionsArgument) {
-    const actualUrl = input.url;
-    const fetchCallArgs = [input, optionsArgument];
-    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
-    let bodyForApiKeyCheck;
-    let bodyForPostMessage;
-
-    if (optionsArgument) {
-      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
-      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
-      if ('body' in optionsArgument) {
-        bodyForApiKeyCheck = optionsArgument.body;
-        bodyForPostMessage = optionsArgument.body;
-      } else {
-        bodyForApiKeyCheck = undefined;
-        bodyForPostMessage = input.body;
-      }
-    } else {
-      bodyForApiKeyCheck = undefined;
-      bodyForPostMessage = input.body;
-    }
-    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
-  }
-
-  window.fetch = function(input, optionsArgument) {
-    let actualUrl;
-    let fetchCallArgs;
-    let effectiveOptions = {};
-    let bodyForApiKeyCheck;
-    let bodyForPostMessage;
-
-    if (typeof input === 'string') {
-      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
-    } else if (input instanceof Request) {
-      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
-    } else {
-      return originalFetch.apply(window, [input, optionsArgument]);
-    }
-
-    effectiveOptions.method = effectiveOptions.method || 'GET';
-    if (!effectiveOptions.headers) {
-      effectiveOptions.headers = new Headers();
-    }
-
-
-    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
-      let apiKeyIsNull = true;
-
-      const regex = new RegExp("models/([^:]+)");
-      const modelNameMatch = actualUrl.match(regex);
-      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
-
-
-      try {
-        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
-        const apiKeyParam = urlObject.searchParams.get('key');
-        if (apiKeyParam) {
-          apiKeyIsNull = false;
-        }
-      } catch (e) {
-        // Continue checks even if URL parsing fails
-      }
-
-      if (apiKeyIsNull && effectiveOptions.headers) {
-        const h = new Headers(effectiveOptions.headers);
-        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
-        if (apiKeyHeaderValue) {
-          apiKeyIsNull = false;
-          return originalFetch.apply(window, fetchCallArgs);
-        }
-      }
-
-      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
-        try {
-          const bodyData = JSON.parse(bodyForApiKeyCheck);
-          if (bodyData && bodyData.apiKey) {
-            apiKeyIsNull = false;
-            return originalFetch.apply(window, fetchCallArgs);
-          }
-        } catch (e) {
-          // Ignore JSON parsing errors
-        }
-      }
-
-      if(apiKeyIsNull) {
-        const promiseId = nextPromiseId++;
-        const promise = new Promise((resolve) => {
-          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
-            delete pendingFetchResolvers[promiseId];
-            resolve(resolvedResponse);
-          };
-        });
-
-        let serializedBodyForPostMessage;
-        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
-            serializedBodyForPostMessage = bodyForPostMessage;
-        } else if (bodyForPostMessage instanceof ReadableStream) {
-            serializedBodyForPostMessage = null;
-        } else {
-            try {
-                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
-            } catch (e) {
-                serializedBodyForPostMessage = null;
-            }
-        }
-
-        const messageOptions = {
-            method: effectiveOptions.method,
-            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
-            body: serializedBodyForPostMessage
-        };
-
-        window.parent.postMessage({
-          type: 'requestFetch',
-          url: actualUrl,
-          modelName: modelName,
-          options: messageOptions,
-          promiseId: promiseId,
-        }, '*');
-
-        return promise;
-      }
-      return originalFetch.apply(window, fetchCallArgs);
-    }
-    return originalFetch.apply(window, fetchCallArgs);
-  };
-
-  window.addEventListener('message', function(event) {
-    if (event.data && event.data.type === 'resolveFetch') {
-      const { promiseId, response } = event.data;
-      if (pendingFetchResolvers[promiseId]) {
-        try {
-          const reconstructedResponse = new Response(response.body, {
-            status: response.status,
-            statusText: response.statusText,
-            headers: new Headers(response.headers),
-          });
-          pendingFetchResolvers[promiseId](reconstructedResponse);
-        } catch (error) {
-          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
-        }
-      }
-    }
-  });
-
-}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function() {
-  const OVERLAY_SELECTOR =
-    'dialog[open], [role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"], [role="combobox"]';
-
-  function isVisibleOverlay(element) {
-    if (element.closest('[hidden], [aria-hidden="true"], [inert]')) {
-      return false;
-    }
-    if (window.getComputedStyle(element).visibility === 'hidden') {
-      return false;
-    }
-    for (let cur = element; cur; cur = cur.parentElement) {
-      if (window.getComputedStyle(cur).display === 'none') {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  function hasOpenOverlay() {
-    const candidates = document.querySelectorAll(OVERLAY_SELECTOR);
-    for (let i = 0; i < candidates.length; i++) {
-      if (isVisibleOverlay(candidates[i])) {
-        return true;
-      }
-    }
-    try {
-      if (document.querySelector('[popover]:popover-open')) {
-        return true;
-      }
-    } catch (e) {
-      // Ignore engines that do not support :popover-open.
-    }
-    return false;
-  }
-
-  function isNonEmptySearchInput(target) {
-    return (
-      Boolean(target) &&
-      target.tagName === 'INPUT' &&
-      typeof target.type === 'string' &&
-      target.type.toLowerCase() === 'search' &&
-      typeof target.value === 'string' &&
-      target.value.length > 0
-    );
-  }
-
-  function shouldIgnoreEscape(event) {
-    return (
-      event.key !== 'Escape' ||
-      event.altKey ||
-      event.ctrlKey ||
-      event.metaKey ||
-      event.shiftKey ||
-      event.isComposing ||
-      event.repeat ||
-      event.keyCode === 229 ||
-      isNonEmptySearchInput(event.target)
-    );
-  }
-
-  let shouldIgnoreCaptureState = false;
-
-  window.addEventListener(
-    'keydown',
-    function(event) {
-      if (event.key === 'Escape') {
-        shouldIgnoreCaptureState =
-          hasOpenOverlay() || isNonEmptySearchInput(event.target);
-      }
-    },
-    {capture: true},
-  );
-
-  window.addEventListener('keydown', function(event) {
-    if (
-      shouldIgnoreEscape(event) ||
-      event.defaultPrevented ||
-      shouldIgnoreCaptureState
-    ) {
-      return;
-    }
-    const wasBlockedOnCapture = shouldIgnoreCaptureState;
-    queueMicrotask(function() {
-      if (event.defaultPrevented || wasBlockedOnCapture) {
-        return;
-      }
-      if (window.parent && window.parent !== window) {
-        window.parent.postMessage({'type': 'escapeKey'}, '*');
-      }
-    });
-  });
-})();</script><script data-bard-client-injected="true">(function() {
-  function normalizeSlug(str) {
-    try {
-      return str
-        .trim()
-        .toLowerCase()
-        .replace(/[^p{L}p{N}s_-]/gu, '')
-        .replace(/s+/g, '-');
-    } catch (e) {
-      return str
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9s_-]/g, '')
-        .replace(/s+/g, '-');
-    }
-  }
-
-  function findTargetElement(hash) {
-    if (!hash || hash === '#') {
-      return null;
-    }
-    const rawId = hash.startsWith('#') ? hash.slice(1) : hash;
-    let decodedId = rawId;
-    try {
-      decodedId = decodeURIComponent(rawId);
-    } catch (e) {
-      // Ignore URI malformed errors.
-    }
-
-    // 1. Direct ID match (raw and decoded).
-    let target = document.getElementById(rawId) || document.getElementById(decodedId);
-    if (target) {
-      return target;
-    }
-
-    // 2. Name attribute match (<a name="...">).
-    try {
-      if (typeof CSS !== 'undefined' && CSS.escape) {
-        target =
-          document.querySelector('[name="' + CSS.escape(rawId) + '"]') ||
-          document.querySelector('[name="' + CSS.escape(decodedId) + '"]');
-      } else {
-        const namedElements = document.getElementsByName(rawId);
-        if (namedElements && namedElements.length > 0) {
-          return namedElements[0];
-        }
-      }
-    } catch (e) {
-      // Ignore querySelector syntax errors.
-    }
-    if (target) {
-      return target;
-    }
-
-    // 3. Match heading text by slug (for Markdown TOCs where headings lack explicit IDs).
-    const targetSlug = normalizeSlug(decodedId);
-    if (targetSlug) {
-      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
-        if (normalizeSlug(heading.textContent || '') === targetSlug) {
-          return heading;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  document.addEventListener('click', function(event) {
-    const target = event.target;
-    const anchor = target && typeof target.closest === 'function' ? target.closest('a') : null;
-    if (!anchor) {
-      return;
-    }
-
-    const href = anchor.getAttribute('href');
-    if (
-      !href ||
-      href.trim().toLowerCase().startsWith('javascript:') ||
-      anchor.hasAttribute('download')
-    ) {
-      return;
-    }
-
-    // Check if the link is an in-page hash / anchor link.
-    if (href.startsWith('#')) {
-      event.preventDefault();
-      const targetElement = findTargetElement(href);
-      if (targetElement) {
-        targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
-      }
-      return;
-    }
-
-    // Check if the URL has the same origin/pathname but with a hash.
-    try {
-      const url = new URL(anchor.href, window.location.href);
-      if (
-        url.hash &&
-        url.origin === window.location.origin &&
-        url.pathname === window.location.pathname
-      ) {
-        event.preventDefault();
-        const targetElement = findTargetElement(url.hash);
-        if (targetElement) {
-          targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
-        }
-        return;
-      }
-    } catch (e) {
-      // Fall through if URL parsing fails.
-    }
-
-    // For all external or full navigation links, prevent iframe-level navigation
-    // (which breaks in AGSA WebView or sandboxed iframes) and ensure they open
-    // safely in a new tab/window.
-    if (anchor.target !== '_blank') {
-      event.preventDefault();
-      window.open(anchor.href, '_blank', 'noopener,noreferrer');
-    }
-  }, {capture: true});
-})();</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
-</script><script data-bard-client-injected="true">(function() {
-  const originalConsoleLog = console.log;
-  const originalConsoleError = console.error;
-
-    /**
-   * Normalizes an error event or a promise rejection reason into a structured error object.
-   * @param {*} errorEventOrReason The error object or reason.
-   * @return {object} Structured error data { message, name, stack }.
-   */
-  function getErrorObject(errorEventOrReason) {
-    if (errorEventOrReason instanceof Error) {
-      return {
-        message: errorEventOrReason.message,
-        name: errorEventOrReason.name,
-        stack: errorEventOrReason.stack,
-      };
-    }
-    // Fallback for non-Error objects.
-    try {
-      return {
-        message: JSON.stringify(errorEventOrReason),
-        name: 'UnknownErrorType',
-        stack: null,
-      };
-    } catch (e) {
-      return {
-        message: String(errorEventOrReason),
-        name: 'UnknownErrorTypeNonStringifiable',
-        stack: null,
-      };
-    }
-  }
-
-  /**
-   * Converts an array of arguments (from log/error) into a single string.
-   * Handles Error objects specially to include their message and stack.
-   * @param {Array<*>} args - Arguments passed to console methods.
-   * @return {string} A string representation of the arguments.
-   */
-  function stringifyArgs(args) {
-    return args
-      .map((arg) => {
-        if (arg instanceof Error) {
-          const {message, stack} = arg;
-          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
-        }
-        if (typeof arg === 'object' && arg !== null) {
-          try {
-            return JSON.stringify(arg);
-          } catch (error) {
-            return '[Circular Object]';
-          }
-        } else {
-          return String(arg);
-        }
-      })
-      .join(' ');
-  }
-
-  console.log = function(...args) {
-    const logString = stringifyArgs(args);
-    window.parent.postMessage({ type: 'log', message: logString }, '*');
-    originalConsoleLog.apply(console, args);
-  };
-
-  console.error = function(...args) {
-    let errorData;
-    if (args.length > 0 && args[0] instanceof Error) {
-      const err = args[0];
-      // If the first arg is an Error, capture its details.
-      errorData = {
-        type: 'error',
-        source: 'CONSOLE_ERROR',
-        ...getErrorObject(err),
-        rawArgsString: stringifyArgs(args.slice(1)),
-        timestamp: new Date().toISOString(),
-      };
-    } else {
-      // If not an Error object, treat all args as a general error message.
-      errorData = {
-        type: 'error',
-        source: 'CONSOLE_ERROR',
-        message: stringifyArgs(args),
-        name: 'ConsoleLoggedError',
-        stack: null,
-        timestamp: new Date().toISOString(),
-      };
-    }
-    window.parent.postMessage(errorData, '*');
-    originalConsoleError.apply(console, args);
-  };
-
-  // Listen for global unhandled synchronous errors.
-  window.addEventListener('error', function(event) {
-    const errorDetails = event.error ? getErrorObject(event.error) : {
-      message: event.message,
-      name: 'GlobalError',
-      stack: null,
-      filename: event.filename,
-      lineno: event.lineno,
-      colno: event.colno,
-    };
-
-    window.parent.postMessage({
-      type: 'error',
-      source: 'global',
-      ...errorDetails,
-      message: errorDetails.message || event.message,
-      timestamp: new Date().toISOString(),
-    }, '*');
-  });
-
-  // Listen for unhandled promise rejections (asynchronous errors).
-  window.addEventListener('unhandledrejection', function(event) {
-    const errorDetails = getErrorObject(event.reason);
-
-    window.parent.postMessage({
-      type: 'error',
-      source: 'unhandledrejection',
-      ...errorDetails,
-      message: errorDetails.message || 'Unhandled Promise Rejection',
-      timestamp: new Date().toISOString(),
-    }, '*');
-  });
-
-})();</script>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#1e293b">
@@ -828,7 +14,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Font Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Dynamic PWA Manifest Generator for Android Installability -->
     <script>
@@ -856,7 +42,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         link.rel = 'manifest';
         link.href = manifestURL;
         document.head.appendChild(link);
-    </script><link rel="manifest" href="blob:https://4z8xogdhb5j2uvhxl6swrqauku6f0cdj582g274u5elyylyzyq-h1018257101.scf.usercontent.goog/eb200238-b937-4f40-8915-bb069526f6f0">
+    </script>
 
     <style>
         body {
@@ -895,7 +81,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
     </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.bottom-0{bottom:0px}.bottom-16{bottom:4rem}.left-0{left:0px}.left-3{left:0.75rem}.right-0{right:0px}.right-2\.5{right:0.625rem}.right-5{right:1.25rem}.top-0{top:0px}.top-1\/2{top:50%}.z-40{z-index:40}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mr-1{margin-right:0.25rem}.mr-1\.5{margin-right:0.375rem}.mr-4{margin-right:1rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-4{margin-top:1rem}.ml-1{margin-left:0.25rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-0\.5{height:0.125rem}.h-10{height:2.5rem}.h-2{height:0.5rem}.h-2\.5{height:0.625rem}.h-48{height:12rem}.h-6{height:1.5rem}.h-9{height:2.25rem}.h-full{height:100%}.max-h-\[540px\]{max-height:540px}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-2{width:0.5rem}.w-2\.5{width:0.625rem}.w-6{width:1.5rem}.w-9{width:2.25rem}.w-full{width:100%}.min-w-full{min-width:100%}.max-w-5xl{max-width:64rem}.max-w-\[180px\]{max-width:180px}.max-w-md{max-width:28rem}.max-w-sm{max-width:24rem}.shrink-0{flex-shrink:0}.flex-grow{flex-grow:1}.-translate-y-1\/2{--tw-translate-y:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.scale-110{--tw-scale-x:1.1;--tw-scale-y:1.1;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.cursor-pointer{cursor:pointer}.list-inside{list-style-position:inside}.list-disc{list-style-type:disc}.list-none{list-style-type:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.justify-around{justify-content:space-around}.gap-0\.5{gap:0.125rem}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-y-1 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.25rem * var(--tw-space-y-reverse))}.space-y-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.375rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-gray-100 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(243 244 246 / var(--tw-divide-opacity, 1))}.divide-gray-200 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(229 231 235 / var(--tw-divide-opacity, 1))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.whitespace-nowrap{white-space:nowrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-t{border-top-width:1px}.border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138 / var(--tw-border-opacity, 1))}.border-blue-200{--tw-border-opacity:1;border-color:rgb(191 219 254 / var(--tw-border-opacity, 1))}.border-emerald-200{--tw-border-opacity:1;border-color:rgb(167 243 208 / var(--tw-border-opacity, 1))}.border-emerald-400\/30{border-color:rgb(52 211 153 / 0.3)}.border-gray-100{--tw-border-opacity:1;border-color:rgb(243 244 246 / var(--tw-border-opacity, 1))}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225 / var(--tw-border-opacity, 1))}.border-slate-700{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.border-transparent{border-color:transparent}.border-amber-200\/80{border-color:rgb(253 230 138 / 0.8)}.bg-amber-100{--tw-bg-opacity:1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235 / var(--tw-bg-opacity, 1))}.bg-blue-100{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.bg-blue-50{--tw-bg-opacity:1;background-color:rgb(239 246 255 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-emerald-100{--tw-bg-opacity:1;background-color:rgb(209 250 229 / var(--tw-bg-opacity, 1))}.bg-emerald-400{--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.bg-emerald-50{--tw-bg-opacity:1;background-color:rgb(236 253 245 / var(--tw-bg-opacity, 1))}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-emerald-500\/20{background-color:rgb(16 185 129 / 0.2)}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-orange-500{--tw-bg-opacity:1;background-color:rgb(249 115 22 / var(--tw-bg-opacity, 1))}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.bg-slate-400{--tw-bg-opacity:1;background-color:rgb(148 163 184 / var(--tw-bg-opacity, 1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-amber-50\/40{background-color:rgb(255 251 235 / 0.4)}.bg-amber-500{--tw-bg-opacity:1;background-color:rgb(245 158 11 / var(--tw-bg-opacity, 1))}.bg-emerald-50\/70{background-color:rgb(236 253 245 / 0.7)}.bg-opacity-50{--tw-bg-opacity:0.5}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-slate-900{--tw-gradient-from:#0f172a var(--tw-gradient-from-position);--tw-gradient-to:rgb(15 23 42 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-slate-800{--tw-gradient-to:#1e293b var(--tw-gradient-to-position)}.p-1{padding:0.25rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-1\.5{padding:0.375rem}.p-3\.5{padding:0.875rem}.\!py-1{padding-top:0.25rem !important;padding-bottom:0.25rem !important}.px-1{padding-left:0.25rem;padding-right:0.25rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-10{padding-left:2.5rem;padding-right:2.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-3\.5{padding-top:0.875rem;padding-bottom:0.875rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-2{padding-bottom:0.5rem}.pb-20{padding-bottom:5rem}.pb-3{padding-bottom:0.75rem}.pb-8{padding-bottom:2rem}.pl-3{padding-left:0.75rem}.pl-8{padding-left:2rem}.pr-1{padding-right:0.25rem}.pr-8{padding-right:2rem}.pt-3{padding-top:0.75rem}.pt-5{padding-top:1.25rem}.text-left{text-align:left}.text-center{text-align:center}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.\!text-\[11px\]{font-size:11px !important}.\!text-xs{font-size:0.75rem !important;line-height:1rem !important}.text-2xl{font-size:1.5rem;line-height:2rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-normal{font-weight:400}.font-semibold{font-weight:600}.font-extrabold{font-weight:800}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-none{line-height:1}.tracking-tight{letter-spacing:-0.025em}.tracking-wider{letter-spacing:0.05em}.text-amber-400{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11 / var(--tw-text-opacity, 1))}.text-amber-600{--tw-text-opacity:1;color:rgb(217 119 6 / var(--tw-text-opacity, 1))}.text-amber-800{--tw-text-opacity:1;color:rgb(146 64 14 / var(--tw-text-opacity, 1))}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216 / var(--tw-text-opacity, 1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105 / var(--tw-text-opacity, 1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87 / var(--tw-text-opacity, 1))}.text-emerald-800{--tw-text-opacity:1;color:rgb(6 95 70 / var(--tw-text-opacity, 1))}.text-emerald-900{--tw-text-opacity:1;color:rgb(6 78 59 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-900{--tw-text-opacity:1;color:rgb(17 24 39 / var(--tw-text-opacity, 1))}.text-orange-300{--tw-text-opacity:1;color:rgb(253 186 116 / var(--tw-text-opacity, 1))}.text-orange-400{--tw-text-opacity:1;color:rgb(251 146 60 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59 / var(--tw-text-opacity, 1))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.underline{-webkit-text-decoration-line:underline;text-decoration-line:underline}.opacity-0{opacity:0}.opacity-100{opacity:1}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.hover\:bg-amber-100:hover{--tw-bg-opacity:1;background-color:rgb(254 243 199 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-100:hover{--tw-bg-opacity:1;background-color:rgb(219 234 254 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-emerald-500:hover{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.hover\:bg-emerald-700:hover{--tw-bg-opacity:1;background-color:rgb(4 120 87 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:bg-orange-600:hover{--tw-bg-opacity:1;background-color:rgb(234 88 12 / var(--tw-bg-opacity, 1))}.hover\:bg-red-700:hover{--tw-bg-opacity:1;background-color:rgb(185 28 28 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-200:hover{--tw-bg-opacity:1;background-color:rgb(226 232 240 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-700:hover{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.hover\:bg-amber-50:hover{--tw-bg-opacity:1;background-color:rgb(255 251 235 / var(--tw-bg-opacity, 1))}.hover\:bg-red-50:hover{--tw-bg-opacity:1;background-color:rgb(254 242 242 / var(--tw-bg-opacity, 1))}.hover\:bg-white:hover{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.hover\:text-blue-800:hover{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.hover\:text-gray-500:hover{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.hover\:text-red-600:hover{--tw-text-opacity:1;color:rgb(220 38 38 / var(--tw-text-opacity, 1))}.hover\:text-slate-600:hover{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:text-amber-400:hover{--tw-text-opacity:1;color:rgb(251 191 36 / var(--tw-text-opacity, 1))}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}.hover\:shadow-sm:hover{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:border-emerald-500:focus{--tw-border-opacity:1;border-color:rgb(16 185 129 / var(--tw-border-opacity, 1))}.focus\:bg-white:focus{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}.focus\:ring-emerald-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(16 185 129 / var(--tw-ring-opacity, 1))}.active\:scale-95:active{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.active\:scale-\[0\.99\]:active{--tw-scale-x:0.99;--tw-scale-y:0.99;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.group[open] .group-open\:rotate-180{--tw-rotate:180deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@media (min-width: 640px){.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:p-6{padding:1.5rem}}@media (min-width: 768px){.md\:bottom-5{bottom:1.25rem}.md\:flex{display:flex}.md\:hidden{display:none}.md\:w-auto{width:auto}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}.md\:pb-8{padding-bottom:2rem}}</style></head>
+</head>
 <body class="min-h-screen flex flex-col text-slate-800 pb-20 md:pb-8">
 
     <!-- Top App Header -->
@@ -915,14 +101,14 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
 
             <!-- Desktop Navigation Tabs -->
             <nav class="hidden md:flex items-center gap-1 bg-slate-800 p-1 rounded-lg">
-                <button onclick="switchTab('calc-view')" id="nav-calc-desktop" class="px-4 py-1.5 rounded-md text-sm font-medium text-slate-300 hover:text-white transition-all">
+                <button onclick="switchTab('calc-view')" id="nav-calc-desktop" class="px-4 py-1.5 rounded-md text-sm font-medium bg-orange-500 text-white transition-all">
                     <i class="fa-solid fa-calculator mr-1.5"></i>Solver
                 </button>
                 <button onclick="switchTab('profiles-view')" id="nav-profiles-desktop" class="px-4 py-1.5 rounded-md text-sm font-medium text-slate-300 hover:text-white transition-all">
                     <i class="fa-solid fa-book-bookmark mr-1.5"></i>Saved Library
                 </button>
-                <button onclick="switchTab('guide-view')" id="nav-guide-desktop" class="px-4 py-1.5 rounded-md text-sm font-medium bg-orange-500 text-white transition-all">
-                    <i class="fa-brands fa-android mr-1.5 text-emerald-400"></i>Phone &amp; GitHub Guide
+                <button onclick="switchTab('guide-view')" id="nav-guide-desktop" class="px-4 py-1.5 rounded-md text-sm font-medium text-slate-300 hover:text-white transition-all">
+                    <i class="fa-brands fa-android mr-1.5 text-emerald-400"></i>Install on Phone
                 </button>
             </nav>
 
@@ -932,7 +118,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                     <i class="fa-solid fa-download"></i> Install App
                 </button>
                 <button onclick="switchTab('guide-view')" class="md:hidden text-xs bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 px-2.5 py-1.5 rounded-lg font-semibold flex items-center gap-1">
-                    <i class="fa-brands fa-github"></i> Setup Guide
+                    <i class="fa-solid fa-mobile-screen-button"></i> Phone Install
                 </button>
             </div>
         </div>
@@ -942,7 +128,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
     <main class="flex-grow max-w-5xl w-full mx-auto px-4 pt-5">
 
         <!-- ================= VIEW 1: BALLISTICS CALCULATOR ================= -->
-        <div id="calc-view" class="tab-view space-y-6 hidden">
+        <div id="calc-view" class="tab-view space-y-6">
             <!-- Profile Selection Banner -->
             <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-200 grid grid-cols-1 md:grid-cols-2 gap-4">
                 
@@ -953,14 +139,17 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <i class="fa-solid fa-star text-amber-400 mr-1"></i>Favorite Ammo (Quick Select)
                         </label>
                         <div class="flex items-center gap-2">
-                            <span id="bulletCountBadge" class="text-[11px] text-gray-500 font-medium">4 of 37 starred</span>
+                            <span id="bulletCountBadge" class="text-[11px] text-gray-500 font-medium"></span>
                             <button onclick="switchTab('profiles-view')" class="text-[11px] font-bold text-blue-600 hover:underline flex items-center gap-0.5" title="Search all ammo in Library">
                                 <i class="fa-solid fa-magnifying-glass text-[10px]"></i> Browse All
                             </button>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <select id="bulletProfileSelect" class="flex-grow block w-full pl-3 pr-8 py-2 text-sm border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg border bg-gray-50 font-medium"><option value="">-- Select Favorite Ammo (★) --</option><option value="default_177_steel_bb_400">★ .177 Steel BB - 5.1gr (Daisy / Crosman 4.5mm @ 400 fps)</option><option value="default_blazer_9mm">★ 9mm Luger - 115gr CCI Blazer Brass FMJ</option><option value="default_wolf_762">★ 7.62x39mm - 122gr Wolf Performance FMJ</option><option value="default_m193_55">★ 5.56 NATO - 55gr Lake City / Win M193 FMJ</option></select>
+                        <select id="bulletProfileSelect" class="flex-grow block w-full pl-3 pr-8 py-2 text-sm border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-lg border bg-gray-50 font-medium">
+                            <option value="">-- Select Favorite Ammo (★) --</option>
+                            <!-- Favorite Bullet Profiles injected here -->
+                        </select>
                         <button onclick="openSaveModal('bullet')" class="px-3.5 py-2 bg-blue-600 text-white font-semibold text-sm rounded-lg hover:bg-blue-700 shadow-sm flex items-center shrink-0 transition-colors" title="Save Current Settings as Bullet Profile">
                             <i class="fa-solid fa-floppy-disk mr-1.5"></i> Save
                         </button>
@@ -974,14 +163,17 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             <i class="fa-solid fa-star text-amber-400 mr-1"></i>Favorite Weapons (Quick Select)
                         </label>
                         <div class="flex items-center gap-2">
-                            <span id="weaponCountBadge" class="text-[11px] text-gray-500 font-medium">7 of 13 starred</span>
+                            <span id="weaponCountBadge" class="text-[11px] text-gray-500 font-medium"></span>
                             <button onclick="switchTab('profiles-view')" class="text-[11px] font-bold text-emerald-600 hover:underline flex items-center gap-0.5" title="Browse all weapons in Library">
                                 <i class="fa-solid fa-magnifying-glass text-[10px]"></i> Browse All
                             </button>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <select id="weaponProfileSelect" class="flex-grow block w-full pl-3 pr-8 py-2 text-sm border-gray-300 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 rounded-lg border bg-gray-50 font-medium"><option value="">-- Select Favorite Weapon (★) --</option><option value="wpn_glock19_rds_25">★ Glock 19 Gen5 MOS - Red Dot Sight (25yd Zero)</option><option value="wpn_glock43x_rds_15">★ Glock 43X MOS - Micro Red Dot (15yd Zero)</option><option value="wpn_glock43x_rds_25">★ Glock 43X MOS - Micro Red Dot (25yd Zero)</option><option value="wpn_glock_irons_100">★ Glock 19/17 - Factory Iron Sights (100yd Zero)</option><option value="wpn_bb_pistol_10">★ .177 CO2 / Spring BB Pistol or Rifle (10yd Zero)</option><option value="wpn_ak47_irons_100">★ AK-47 / AKM - Iron Sights (100yd Zero)</option><option value="wpn_ar15_50_200">★ AR-15 16" - Red Dot / LPVO (50/200yd Zero)</option></select>
+                        <select id="weaponProfileSelect" class="flex-grow block w-full pl-3 pr-8 py-2 text-sm border-gray-300 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 rounded-lg border bg-gray-50 font-medium">
+                            <option value="">-- Select Favorite Weapon (★) --</option>
+                            <!-- Favorite Weapon Profiles injected here -->
+                        </select>
                         <button onclick="openSaveModal('weapon')" class="px-3.5 py-2 bg-emerald-600 text-white font-semibold text-sm rounded-lg hover:bg-emerald-700 shadow-sm flex items-center shrink-0 transition-colors" title="Save Current Settings as Weapon Profile">
                             <i class="fa-solid fa-floppy-disk mr-1.5"></i> Save
                         </button>
@@ -1017,7 +209,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                     
                     <div class="bg-slate-900 text-orange-400 py-2 px-3 font-bold mb-4 rounded-lg text-center flex items-center justify-between text-sm">
                         <span><i class="fa-solid fa-capsules mr-1.5"></i>Active Load</span>
-                        <span id="activeBulletBadge" class="text-xs font-normal text-slate-300 truncate max-w-[180px]">CCI Blazer Brass 115gr FMJ</span>
+                        <span id="activeBulletBadge" class="text-xs font-normal text-slate-300 truncate max-w-[180px]">Custom / Default</span>
                     </div>
                     
                     <div class="space-y-4">
@@ -1028,7 +220,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             </div>
                             <div class="input-group">
                                 <label for="bulletWeight">Bullet Weight <i>(grains)</i></label>
-                                <input type="number" id="bulletWeight" placeholder="115" value="115" required="">
+                                <input type="number" id="bulletWeight" placeholder="115" value="115" required>
                             </div>
                         </div>
                         
@@ -1040,12 +232,12 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div class="input-group relative">
                                 <label for="bc">Ballistic Coefficient (BC)</label>
-                                <input type="number" id="bc" step="0.001" placeholder="0.112" value="0.112" required="">
+                                <input type="number" id="bc" step="0.001" placeholder="0.112" value="0.112" required>
                             </div>
                             
                             <div class="input-group">
                                 <label for="velocity">Muzzle Velocity <i>(fps)</i></label>
-                                <input type="number" id="velocity" placeholder="1145" value="1145" required="">
+                                <input type="number" id="velocity" placeholder="1145" value="1145" required>
                             </div>
                         </div>
                         
@@ -1070,32 +262,32 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                         <h2 class="section-header">Basic Settings</h2>
                         
                         <div class="bg-slate-900 text-emerald-400 py-2 px-3 font-bold mb-4 rounded-lg text-center flex items-center justify-between text-sm">
-                            <span><i class="fa-solid fa-crosshairs mr-1.5"></i>Optic &amp; Zero Config</span>
-                            <span id="activeWeaponBadge" class="text-xs font-normal text-slate-300 truncate max-w-[180px]">Glock 19 Gen5 MOS - Red Dot Sight (25yd Zero)</span>
+                            <span><i class="fa-solid fa-crosshairs mr-1.5"></i>Optic & Zero Config</span>
+                            <span id="activeWeaponBadge" class="text-xs font-normal text-slate-300 truncate max-w-[180px]">Glock Iron Sights</span>
                         </div>
 
                         <div class="space-y-4">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div class="input-group">
                                     <label for="zeroRange">Final (Far) Zero <i>(yards)</i></label>
-                                    <input type="number" id="zeroRange" placeholder="100" value="100" required="">
+                                    <input type="number" id="zeroRange" placeholder="100" value="100" required>
                                 </div>
                                 
                                 <div class="input-group relative">
                                     <label for="sightHeight">Sight Height Over Bore <i>(in)</i></label>
-                                    <input type="number" id="sightHeight" step="0.05" placeholder="0.9" value="0.9" required="">
+                                    <input type="number" id="sightHeight" step="0.05" placeholder="0.9" value="0.9" required>
                                 </div>
                             </div>
                             
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div class="input-group">
                                     <label for="maxDistance">Max Chart Distance <i>(yards)</i></label>
-                                    <input type="number" id="maxDistance" placeholder="200" value="200" required="">
+                                    <input type="number" id="maxDistance" placeholder="200" value="200" required>
                                 </div>
                                 
                                 <div class="input-group">
                                     <label for="distanceStep">Distance Step <i>(yards)</i></label>
-                                    <input type="number" id="distanceStep" placeholder="10" value="10" required="">
+                                    <input type="number" id="distanceStep" placeholder="10" value="10" required>
                                 </div>
                             </div>
                         </div>
@@ -1105,7 +297,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                     <div class="mt-4 pt-3 border-t border-gray-100">
                         <details class="group">
                             <summary class="flex justify-between items-center text-xs font-bold text-slate-600 cursor-pointer list-none">
-                                <span><i class="fa-solid fa-wind mr-1.5 text-blue-500"></i>Advanced Atmosphere &amp; Wind (Optional)</span>
+                                <span><i class="fa-solid fa-wind mr-1.5 text-blue-500"></i>Advanced Atmosphere & Wind (Optional)</span>
                                 <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
                             </summary>
                             <div class="grid grid-cols-3 gap-2 mt-3">
@@ -1130,7 +322,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
             <!-- Calculate Button -->
             <div class="flex justify-center">
                 <button id="calculateBtn" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold py-3.5 px-10 rounded-xl shadow-md transition-all text-base flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-calculator"></i> Calculate Trajectory &amp; Zeros
+                    <i class="fa-solid fa-calculator"></i> Calculate Trajectory & Zeros
                 </button>
             </div>
 
@@ -1138,52 +330,21 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
             <section id="results-section" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="bg-slate-900 text-white px-5 py-3.5 flex flex-wrap justify-between items-center gap-2">
                     <h2 class="text-base font-bold flex items-center gap-2">
-                        <i class="fa-solid fa-chart-line text-orange-400"></i> Trajectory &amp; Zero Analysis
+                        <i class="fa-solid fa-chart-line text-orange-400"></i> Trajectory & Zero Analysis
                     </h2>
-                    <span id="zeroSummaryPill" class="text-xs bg-slate-800 text-orange-300 px-3 py-1 rounded-full font-semibold border border-slate-700">Near Zero: 6.7 yd  |  Far Zero: 75 yd</span>
+                    <span id="zeroSummaryPill" class="text-xs bg-slate-800 text-orange-300 px-3 py-1 rounded-full font-semibold border border-slate-700">
+                        Ready to solve
+                    </span>
                 </div>
                 <div class="p-4 sm:p-6">
                     <div id="resultsSummary" class="mb-5">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-3.5 flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center text-lg shrink-0">
-                                <i class="fa-solid fa-crosshairs"></i>
-                            </div>
-                            <div>
-                                <div class="text-[11px] font-bold uppercase tracking-wider text-blue-700">Initial (Near) Zero</div>
-                                <div class="text-xl font-extrabold text-slate-900">6.7 <span class="text-xs font-semibold text-slate-600">yards</span></div>
-                                <div class="text-[11px] text-slate-500">Bullet first crosses sightline rising</div>
-                            </div>
-                        </div>
-
-                        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5 flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-lg shrink-0">
-                                <i class="fa-solid fa-bullseye"></i>
-                            </div>
-                            <div>
-                                <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Final (Far) Zero</div>
-                                <div class="text-xl font-extrabold text-slate-900">75.0 <span class="text-xs font-semibold text-slate-600">yards</span></div>
-                                <div class="text-[11px] text-slate-500">Bullet crosses sightline falling</div>
-                            </div>
-                        </div>
-
-                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-amber-500 text-white flex items-center justify-center text-lg shrink-0">
-                                <i class="fa-solid fa-arrows-up-to-line"></i>
-                            </div>
-                            <div>
-                                <div class="text-[11px] font-bold uppercase tracking-wider text-amber-800">Max Rise (Mid-Range)</div>
-                                <div class="text-xl font-extrabold text-slate-900">+2.4" <span class="text-xs font-semibold text-slate-600">@ 43yd</span></div>
-                                <div class="text-[11px] text-slate-500">Peak height above line of sight</div>
-                            </div>
-                        </div>
+                        <div class="text-sm text-gray-500 italic">Click "Calculate Trajectory" to compute Initial Zero, Far Zero, and drop table.</div>
                     </div>
-                </div>
 
                     <!-- Visual Trajectory Canvas -->
                     <div class="mb-6 bg-slate-50 border border-slate-200 rounded-xl p-3">
                         <div class="flex justify-between items-center mb-2">
-                            <span id="chartRangeLabel" class="text-xs font-bold uppercase tracking-wider text-slate-500">Flight Path vs. Line of Sight (0 – 150 yds)</span>
+                            <span id="chartRangeLabel" class="text-xs font-bold uppercase tracking-wider text-slate-500">Flight Path vs. Line of Sight</span>
                             <div class="flex items-center gap-3 text-[11px] font-medium">
                                 <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block"></span>Bullet Path</span>
                                 <span class="flex items-center gap-1"><span class="w-2.5 h-0.5 bg-slate-400 inline-block"></span>Line of Sight</span>
@@ -1191,7 +352,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                             </div>
                         </div>
                         <div class="w-full h-48 relative">
-                            <canvas id="trajectoryCanvas" class="w-full h-full block" width="0" height="0"></canvas>
+                            <canvas id="trajectoryCanvas" class="w-full h-full block"></canvas>
                         </div>
                     </div>
 
@@ -1207,286 +368,9 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                                     <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Energy (ft-lb)</th>
                                 </tr>
                             </thead>
-                            <tbody id="resultsBody" class="bg-white divide-y divide-gray-100"><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        0 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-0.9"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">0.0</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">0.0"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">1145</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">335</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        5 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-0.2"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-4.2</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">0.0"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">1125</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">323</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        10 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+0.4"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+3.7</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">0.1"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">1105</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">312</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        15 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+0.9"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+5.9</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">0.2"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">1085</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">301</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        20 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+1.4"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+6.6</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">0.3"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">1066</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">290</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        25 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+1.8"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+6.7</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">0.5"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">1047</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">280</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        30 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+2.1"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+6.5</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">0.8"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">1029</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">270</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        35 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+2.3"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+6.1</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">1.1"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">1010</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">261</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        40 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+2.4"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+5.6</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">1.4"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">993</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">252</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        45 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+2.4"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+5.0</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">1.8"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">975</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">243</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        50 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+2.3"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+4.3</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">2.2"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">958</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">234</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        55 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+2.1"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+3.6</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">2.7"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">941</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">226</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        60 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+1.7"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+2.8</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">3.2"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">924</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">218</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        65 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+1.3"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+1.9</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">3.8"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">908</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">210</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        70 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+0.7"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-blue-600 font-semibold">+1.0</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">4.4"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">892</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">203</td>
-                </tr><tr class="bg-emerald-50/70 font-semibold border-b border-emerald-200">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        75 <span class="ml-1 text-[10px] bg-emerald-600 text-white px-1.5 py-0.5 rounded uppercase">Zero</span>
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-emerald-700 font-bold">0.0"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-emerald-700 font-bold">0.0</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">5.1"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">876</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">196</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        80 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-0.8"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-1.0</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">5.8"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">860</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">189</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        85 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-1.8"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-2.1</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">6.6"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">845</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">182</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        90 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-3.0"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-3.2</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">7.4"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">830</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">176</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        95 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-4.3"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-4.3</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">8.3"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">816</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">170</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        100 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-5.8"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-5.5</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">9.3"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">801</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">164</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        105 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-7.4"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-6.8</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">10.3"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">787</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">158</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        110 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-9.3"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-8.0</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">11.4"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">773</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">153</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        115 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-11.3"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-9.4</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">12.5"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">759</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">147</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        120 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-13.5"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-10.8</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">13.7"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">746</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">142</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        125 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-16.0"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-12.2</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">15.0"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">733</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">137</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        130 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-18.6"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-13.7</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">16.3"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">720</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">132</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        135 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-21.5"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-15.2</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">17.7"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">707</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">128</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        140 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-24.6"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-16.8</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">19.2"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">694</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">123</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        145 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-28.0"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-18.5</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">20.7"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">682</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">119</td>
-                </tr><tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="px-4 py-3 whitespace-nowrap font-bold text-slate-900">
-                        150 
-                    </td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-31.7"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-red-600 font-semibold">-20.2</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">22.3"</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">670</td>
-                    <td class="px-4 py-3 whitespace-nowrap text-slate-600">115</td>
-                </tr></tbody>
+                            <tbody id="resultsBody" class="bg-white divide-y divide-gray-100">
+                                <tr><td colspan="6" class="px-6 py-4 text-center text-sm text-gray-500">Click calculate to see trajectory data.</td></tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -1494,10 +378,10 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
         </div>
 
         <!-- ================= VIEW 2: PROFILES & PRESET LIBRARY ================= -->
-        <section id="profiles-view" class="tab-view space-y-6 hidden">
+        <section id="profiles-view" class="tab-view hidden space-y-6">
             <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-wrap justify-between items-center gap-3">
                 <div>
-                    <h2 class="text-lg font-bold text-slate-800">Saved Profiles &amp; Full Factory Library</h2>
+                    <h2 class="text-lg font-bold text-slate-800">Saved Profiles & Full Factory Library</h2>
                     <p class="text-xs text-slate-500">Tap <i class="fa-solid fa-star text-amber-400"></i> to pin to your Calculator dropdowns, or tap <b>Load</b> (using any profile automatically makes it a favorite!).</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
@@ -1520,221 +404,23 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                         <h3 class="text-base font-bold text-blue-800 flex items-center gap-2">
                             <i class="fa-solid fa-bullseye"></i> Bullet / Ammo Library
                         </h3>
-                        <span class="text-xs bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full font-semibold" id="bulletListCount">11 shown (4 ★)</span>
+                        <span class="text-xs bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full font-semibold" id="bulletListCount">0</span>
                     </div>
 
                     <!-- Ammo Search Bar -->
                     <div class="relative mb-3">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                         <input type="text" id="bulletSearchInput" oninput="renderProfilesLists()" placeholder="Search ammo by caliber, grain, brand (e.g. 9mm, .177, 6.5, Wolf)..." class="w-full pl-8 pr-8 py-2 text-xs border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 focus:bg-white">
-                        <button id="clearBulletSearchBtn" onclick="clearLibrarySearch('bullet')" class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
+                        <button id="clearBulletSearchBtn" onclick="clearLibrarySearch('bullet')" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
                             <i class="fa-solid fa-circle-xmark"></i>
                         </button>
                     </div>
 
                     <div id="bulletProfilesList" class="space-y-2.5 max-h-[540px] overflow-y-auto pr-1 flex-grow">
-                        <div class="text-center py-8 text-gray-500 italic text-sm" id="emptyBulletProfilesMsg" style="display: none;">
+                        <div class="text-center py-8 text-gray-500 italic text-sm" id="emptyBulletProfilesMsg">
                             No matching bullet profiles found.
                         </div>
-                    <div class="bg-amber-50/40 border border-amber-200/80 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('default_blazer_9mm', 'bullet')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Remove from Favorites Dropdown">
-                        <i class="fa-solid fa-star text-amber-400 scale-110 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="9mm Luger - 115gr CCI Blazer Brass FMJ">9mm Luger - 115gr CCI Blazer Brass FMJ</h3>
-                        <div class="text-xs text-gray-500 mt-1"><span class="font-semibold text-slate-700">9mm Luger</span> • 115gr | 1145 fps | BC: 0.112 (G1)</div>
                     </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('default_blazer_9mm', 'bullet')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'default_blazer_9mm', 'bullet')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('default_winchester_9mm', 'bullet')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="9mm Luger - 115gr Winchester White Box FMJ">9mm Luger - 115gr Winchester White Box FMJ</h3>
-                        <div class="text-xs text-gray-500 mt-1"><span class="font-semibold text-slate-700">9mm Luger</span> • 115gr | 1190 fps | BC: 0.111 (G1)</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('default_winchester_9mm', 'bullet')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'default_winchester_9mm', 'bullet')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('default_fed_hst_124', 'bullet')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="9mm Luger - 124gr Federal HST JHP">9mm Luger - 124gr Federal HST JHP</h3>
-                        <div class="text-xs text-gray-500 mt-1"><span class="font-semibold text-slate-700">9mm Luger</span> • 124gr | 1150 fps | BC: 0.14 (G1)</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('default_fed_hst_124', 'bullet')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'default_fed_hst_124', 'bullet')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('default_speer_gd_124p', 'bullet')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="9mm Luger +P - 124gr Speer Gold Dot JHP">9mm Luger +P - 124gr Speer Gold Dot JHP</h3>
-                        <div class="text-xs text-gray-500 mt-1"><span class="font-semibold text-slate-700">9mm Luger +P</span> • 124gr | 1220 fps | BC: 0.138 (G1)</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('default_speer_gd_124p', 'bullet')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'default_speer_gd_124p', 'bullet')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('default_hornady_cd_115', 'bullet')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="9mm Luger - 115gr Hornady Critical Defense FTX">9mm Luger - 115gr Hornady Critical Defense FTX</h3>
-                        <div class="text-xs text-gray-500 mt-1"><span class="font-semibold text-slate-700">9mm Luger</span> • 115gr | 1135 fps | BC: 0.119 (G1)</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('default_hornady_cd_115', 'bullet')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'default_hornady_cd_115', 'bullet')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('default_hornady_cduty_135p', 'bullet')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="9mm Luger +P - 135gr Hornady Critical Duty FlexLock">9mm Luger +P - 135gr Hornady Critical Duty FlexLock</h3>
-                        <div class="text-xs text-gray-500 mt-1"><span class="font-semibold text-slate-700">9mm Luger +P</span> • 135gr | 1110 fps | BC: 0.168 (G1)</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('default_hornady_cduty_135p', 'bullet')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'default_hornady_cduty_135p', 'bullet')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('default_blazer_147', 'bullet')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="9mm Luger - 147gr Subsonic FMJ (Federal/Blazer)">9mm Luger - 147gr Subsonic FMJ (Federal/Blazer)</h3>
-                        <div class="text-xs text-gray-500 mt-1"><span class="font-semibold text-slate-700">9mm Luger</span> • 147gr | 990 fps | BC: 0.195 (G1)</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('default_blazer_147', 'bullet')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'default_blazer_147', 'bullet')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-amber-50/40 border border-amber-200/80 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('default_wolf_762', 'bullet')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Remove from Favorites Dropdown">
-                        <i class="fa-solid fa-star text-amber-400 scale-110 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="7.62x39mm - 122gr Wolf Performance FMJ">7.62x39mm - 122gr Wolf Performance FMJ</h3>
-                        <div class="text-xs text-gray-500 mt-1"><span class="font-semibold text-slate-700">7.62x39mm</span> • 122gr | 2396 fps | BC: 0.268 (G1)</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('default_wolf_762', 'bullet')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'default_wolf_762', 'bullet')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('default_tula_762_124', 'bullet')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="7.62x39mm - 124gr Tula / Barnaul SP">7.62x39mm - 124gr Tula / Barnaul SP</h3>
-                        <div class="text-xs text-gray-500 mt-1"><span class="font-semibold text-slate-700">7.62x39mm</span> • 124gr | 2350 fps | BC: 0.275 (G1)</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('default_tula_762_124', 'bullet')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'default_tula_762_124', 'bullet')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('default_hornady_762_sst', 'bullet')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="7.62x39mm - 123gr Hornady BLACK SST">7.62x39mm - 123gr Hornady BLACK SST</h3>
-                        <div class="text-xs text-gray-500 mt-1"><span class="font-semibold text-slate-700">7.62x39mm</span> • 123gr | 2350 fps | BC: 0.295 (G1)</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('default_hornady_762_sst', 'bullet')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'default_hornady_762_sst', 'bullet')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('default_545x39_60', 'bullet')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="5.45x39mm - 60gr Wolf / Barnaul FMJ (AK-74)">5.45x39mm - 60gr Wolf / Barnaul FMJ (AK-74)</h3>
-                        <div class="text-xs text-gray-500 mt-1"><span class="font-semibold text-slate-700">5.45x39mm</span> • 60gr | 2936 fps | BC: 0.329 (G1)</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('default_545x39_60', 'bullet')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'default_545x39_60', 'bullet')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div></div>
                 </div>
 
                 <!-- Weapon Profiles (Right Column to match Calculator) -->
@@ -1743,7 +429,7 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                         <h3 class="text-base font-bold text-emerald-800 flex items-center gap-2">
                             <i class="fa-solid fa-gun"></i> Weapon Profiles
                         </h3>
-                        <span class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-semibold" id="weaponListCount">13 shown (7 ★)</span>
+                        <span class="text-xs bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-semibold" id="weaponListCount">0</span>
                     </div>
 
                     <!-- Weapon Search Bar -->
@@ -1756,362 +442,71 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
                     </div>
 
                     <div id="weaponProfilesList" class="space-y-2.5 max-h-[540px] overflow-y-auto pr-1 flex-grow">
-                        <div class="text-center py-8 text-gray-500 italic text-sm" id="emptyWeaponProfilesMsg" style="display: none;">
+                        <div class="text-center py-8 text-gray-500 italic text-sm" id="emptyWeaponProfilesMsg">
                             No matching weapon profiles found.
                         </div>
-                    <div class="bg-amber-50/40 border border-amber-200/80 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('wpn_glock19_rds_25', 'weapon')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Remove from Favorites Dropdown">
-                        <i class="fa-solid fa-star text-amber-400 scale-110 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="Glock 19 Gen5 MOS - Red Dot Sight (25yd Zero)">Glock 19 Gen5 MOS - Red Dot Sight (25yd Zero)</h3>
-                        <div class="text-xs text-gray-500 mt-1">Far Zero: <b>25yd</b> | Sight Ht: <b>1.25"</b> | Max: 150yd</div>
                     </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('wpn_glock19_rds_25', 'weapon')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'wpn_glock19_rds_25', 'weapon')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-amber-50/40 border border-amber-200/80 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('wpn_glock43x_rds_15', 'weapon')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Remove from Favorites Dropdown">
-                        <i class="fa-solid fa-star text-amber-400 scale-110 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="Glock 43X MOS - Micro Red Dot (15yd Zero)">Glock 43X MOS - Micro Red Dot (15yd Zero)</h3>
-                        <div class="text-xs text-gray-500 mt-1">Far Zero: <b>15yd</b> | Sight Ht: <b>1.15"</b> | Max: 100yd</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('wpn_glock43x_rds_15', 'weapon')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'wpn_glock43x_rds_15', 'weapon')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-amber-50/40 border border-amber-200/80 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('wpn_glock43x_rds_25', 'weapon')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Remove from Favorites Dropdown">
-                        <i class="fa-solid fa-star text-amber-400 scale-110 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="Glock 43X MOS - Micro Red Dot (25yd Zero)">Glock 43X MOS - Micro Red Dot (25yd Zero)</h3>
-                        <div class="text-xs text-gray-500 mt-1">Far Zero: <b>25yd</b> | Sight Ht: <b>1.15"</b> | Max: 125yd</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('wpn_glock43x_rds_25', 'weapon')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'wpn_glock43x_rds_25', 'weapon')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-amber-50/40 border border-amber-200/80 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('wpn_glock_irons_100', 'weapon')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Remove from Favorites Dropdown">
-                        <i class="fa-solid fa-star text-amber-400 scale-110 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="Glock 19/17 - Factory Iron Sights (100yd Zero)">Glock 19/17 - Factory Iron Sights (100yd Zero)</h3>
-                        <div class="text-xs text-gray-500 mt-1">Far Zero: <b>100yd</b> | Sight Ht: <b>0.9"</b> | Max: 200yd</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('wpn_glock_irons_100', 'weapon')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'wpn_glock_irons_100', 'weapon')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-amber-50/40 border border-amber-200/80 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('wpn_bb_pistol_10', 'weapon')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Remove from Favorites Dropdown">
-                        <i class="fa-solid fa-star text-amber-400 scale-110 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title=".177 CO2 / Spring BB Pistol or Rifle (10yd Zero)">.177 CO2 / Spring BB Pistol or Rifle (10yd Zero)</h3>
-                        <div class="text-xs text-gray-500 mt-1">Far Zero: <b>10yd</b> | Sight Ht: <b>0.85"</b> | Max: 50yd</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('wpn_bb_pistol_10', 'weapon')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'wpn_bb_pistol_10', 'weapon')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-amber-50/40 border border-amber-200/80 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('wpn_ak47_irons_100', 'weapon')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Remove from Favorites Dropdown">
-                        <i class="fa-solid fa-star text-amber-400 scale-110 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="AK-47 / AKM - Iron Sights (100yd Zero)">AK-47 / AKM - Iron Sights (100yd Zero)</h3>
-                        <div class="text-xs text-gray-500 mt-1">Far Zero: <b>100yd</b> | Sight Ht: <b>1.9"</b> | Max: 400yd</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('wpn_ak47_irons_100', 'weapon')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'wpn_ak47_irons_100', 'weapon')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-amber-50/40 border border-amber-200/80 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('wpn_ar15_50_200', 'weapon')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Remove from Favorites Dropdown">
-                        <i class="fa-solid fa-star text-amber-400 scale-110 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="AR-15 16" -="" red="" dot="" lpvo="" (50="" 200yd="" zero)"="">AR-15 16" - Red Dot / LPVO (50/200yd Zero)</h3>
-                        <div class="text-xs text-gray-500 mt-1">Far Zero: <b>50yd</b> | Sight Ht: <b>2.6"</b> | Max: 500yd</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('wpn_ar15_50_200', 'weapon')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'wpn_ar15_50_200', 'weapon')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('wpn_ar15_36_yard', 'weapon')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="AR-15 14.5" 16"="" -="" eotech="" red="" dot="" (36yd="" zero)"="">AR-15 14.5"/16" - EOTech / Red Dot (36yd Zero)</h3>
-                        <div class="text-xs text-gray-500 mt-1">Far Zero: <b>36yd</b> | Sight Ht: <b>2.7"</b> | Max: 500yd</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('wpn_ar15_36_yard', 'weapon')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'wpn_ar15_36_yard', 'weapon')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('wpn_pcc_9mm_25', 'weapon')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="9mm PCC (Scorpion / MP5 / AR9) - Red Dot (25yd Zero)">9mm PCC (Scorpion / MP5 / AR9) - Red Dot (25yd Zero)</h3>
-                        <div class="text-xs text-gray-500 mt-1">Far Zero: <b>25yd</b> | Sight Ht: <b>2.2"</b> | Max: 200yd</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('wpn_pcc_9mm_25', 'weapon')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'wpn_pcc_9mm_25', 'weapon')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('wpn_300blk_pdw_50', 'weapon')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title=".300 BLK Suppressed PDW - Red Dot (50yd Zero)">.300 BLK Suppressed PDW - Red Dot (50yd Zero)</h3>
-                        <div class="text-xs text-gray-500 mt-1">Far Zero: <b>50yd</b> | Sight Ht: <b>2.6"</b> | Max: 250yd</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('wpn_300blk_pdw_50', 'weapon')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'wpn_300blk_pdw_50', 'weapon')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('wpn_precision_rifle_100', 'weapon')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="Precision Bolt Rifle (.308 / 6.5CM) - Scope (100yd Zero)">Precision Bolt Rifle (.308 / 6.5CM) - Scope (100yd Zero)</h3>
-                        <div class="text-xs text-gray-500 mt-1">Far Zero: <b>100yd</b> | Sight Ht: <b>1.75"</b> | Max: 1000yd</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('wpn_precision_rifle_100', 'weapon')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'wpn_precision_rifle_100', 'weapon')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('wpn_lever_3030_100', 'weapon')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="Lever Action Rifle (.30-30 / .45-70) - Scope (100yd Zero)">Lever Action Rifle (.30-30 / .45-70) - Scope (100yd Zero)</h3>
-                        <div class="text-xs text-gray-500 mt-1">Far Zero: <b>100yd</b> | Sight Ht: <b>1.5"</b> | Max: 300yd</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('wpn_lever_3030_100', 'weapon')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'wpn_lever_3030_100', 'weapon')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div><div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex justify-between items-center gap-2 hover:bg-white hover:shadow-sm transition-all">
-                <div class="flex items-start gap-2.5 flex-grow overflow-hidden">
-                    <button onclick="toggleFavorite('wpn_1022_rimfire_50', 'weapon')" class="mt-0.5 p-1 rounded-md hover:bg-amber-50 transition-transform shrink-0" title="Add to Favorites Dropdown">
-                        <i class="fa-regular fa-star text-gray-400 hover:text-amber-400 text-base"></i>
-                    </button>
-                    <div class="overflow-hidden">
-                        <h3 class="font-bold text-sm text-gray-800 truncate" title="Ruger 10/22 Rimfire Rifle - Scope (50yd Zero)">Ruger 10/22 Rimfire Rifle - Scope (50yd Zero)</h3>
-                        <div class="text-xs text-gray-500 mt-1">Far Zero: <b>50yd</b> | Sight Ht: <b>1.5"</b> | Max: 200yd</div>
-                    </div>
-                </div>
-                <div class="flex gap-1.5 shrink-0">
-                    <button onclick="loadProfile('wpn_1022_rimfire_50', 'weapon')" class="px-2.5 py-1.5 bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 rounded-lg shadow-sm flex items-center gap-1" title="Load into Calculator &amp; Auto-Favorite">
-                        <i class="fa-solid fa-bolt"></i> Load
-                    </button>
-                    <button onclick="openConfirmModal('deleteProfile', 'wpn_1022_rimfire_50', 'weapon')" class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div></div>
                 </div>
             </div>
         </section>
 
-        <!-- ================= VIEW 3: ANDROID APP & GITHUB BEGINNER GUIDE ================= -->
-        <section id="guide-view" class="tab-view space-y-6 pb-8">
+        <!-- ================= VIEW 3: INSTALL ON YOUR PHONE ================= -->
+        <section id="guide-view" class="tab-view hidden space-y-6 pb-8">
             <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-2xl shadow-md">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
-                        <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Beginner Friendly Walkthrough</span>
-                        <h2 class="text-2xl font-bold mt-2">Put This App on Your Android Phone &amp; GitHub</h2>
-                        <p class="text-slate-300 text-sm mt-1">Never used GitHub before? No problem. You don't need any coding tools—just a free account and 3 minutes.</p>
+                        <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Offline Range & Field App</span>
+                        <h2 class="text-2xl font-bold mt-2">Install This Calculator on Your Phone</h2>
+                        <p class="text-slate-300 text-sm mt-1">Save this app directly to your home screen so it launches full-screen and works 100% offline with zero cell service.</p>
                     </div>
                     <button onclick="downloadStandaloneApp()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 shrink-0 transition-transform active:scale-95">
-                        <i class="fa-solid fa-download"></i> Download index.html File
+                        <i class="fa-solid fa-download"></i> Download Offline App File
                     </button>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Part 1: GitHub Pages Hosting -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
-                    <div class="flex items-center gap-3 border-b border-gray-100 pb-3">
-                        <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center text-xl">
-                            <i class="fa-brands fa-github"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-gray-900">Part 1: Host on GitHub for Free</h3>
-                            <p class="text-xs text-gray-500">Creates a permanent web link for your phone</p>
-                        </div>
+            <!-- Install on Your Phone Card -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-5">
+                <div class="flex items-center gap-3 border-b border-gray-100 pb-3">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xl">
+                        <i class="fa-brands fa-android"></i>
                     </div>
-
-                    <ol class="space-y-4 text-sm text-slate-700">
-                        <li class="flex gap-3">
-                            <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
-                            <div>
-                                <strong class="text-slate-900 block">Download the App File</strong>
-                                Click the orange <b>"Download index.html File"</b> button above. It saves this entire app as a single file named <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs font-mono">index.html</code>.
-                            </div>
-                        </li>
-                        <li class="flex gap-3">
-                            <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
-                            <div>
-                                <strong class="text-slate-900 block">Create a Free GitHub Account &amp; Repository</strong>
-                                Go to <span class="font-mono text-xs bg-gray-100 px-1.5 py-0.5 rounded">github.com</span> and sign up. Click the <b>"+"</b> icon in the top-right corner and select <b>"New repository"</b>.
-                                <ul class="list-disc list-inside text-xs text-slate-600 mt-1 space-y-1">
-                                    <li>Under <b>Repository name</b>, type <code class="bg-gray-100 px-1 rounded">ballistics-app</code></li>
-                                    <li>Make sure <b>Public</b> is selected</li>
-                                    <li>Check the box that says <b>"Add a README file"</b></li>
-                                    <li>Click the green <b>"Create repository"</b> button at the bottom</li>
-                                </ul>
-                            </div>
-                        </li>
-                        <li class="flex gap-3">
-                            <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
-                            <div>
-                                <strong class="text-slate-900 block">Upload Your index.html File</strong>
-                                Inside your new repository page, click the <b>"Add file"</b> button near the top right, then click <b>"Upload files"</b>. Drag and drop your downloaded <code class="bg-gray-100 px-1 rounded text-xs">index.html</code> file into the box, then click the green <b>"Commit changes"</b> button at the bottom.
-                            </div>
-                        </li>
-                        <li class="flex gap-3">
-                            <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">4</span>
-                            <div>
-                                <strong class="text-slate-900 block">Turn On "GitHub Pages" (Makes it a Live App!)</strong>
-                                <ul class="list-disc list-inside text-xs text-slate-600 mt-1 space-y-1">
-                                    <li>Click <b>"Settings"</b> (the gear icon at the top of your repository)</li>
-                                    <li>On the left sidebar menu, click <b>"Pages"</b></li>
-                                    <li>Under <b>"Branch"</b>, change the dropdown from <i>None</i> to <b>main</b>, then click <b>Save</b></li>
-                                    <li>Wait about 60 seconds and refresh that page—GitHub will show your live link: <code class="bg-emerald-50 text-emerald-700 px-1 rounded">https://your-username.github.io/ballistics-app/</code></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ol>
+                    <div>
+                        <h3 class="font-bold text-gray-900">Install on Your Android or iOS Phone</h3>
+                        <p class="text-xs text-gray-500">Works 100% offline in the field or at the range</p>
+                    </div>
                 </div>
 
-                <!-- Part 2: Installing on Android -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 space-y-4">
-                    <div class="flex items-center gap-3 border-b border-gray-100 pb-3">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xl">
-                            <i class="fa-brands fa-android"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-gray-900">Part 2: Install on Your Android Phone</h3>
-                            <p class="text-xs text-gray-500">Works 100% offline in the field or at the range</p>
-                        </div>
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-xs text-emerald-900 space-y-1.5">
+                    <div class="font-bold flex items-center gap-1.5 text-sm">
+                        <i class="fa-solid fa-circle-check text-emerald-600"></i> Works With Airplane Mode ON:
                     </div>
-
-                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-xs text-emerald-900 space-y-1.5">
-                        <div class="font-bold flex items-center gap-1.5 text-sm">
-                            <i class="fa-solid fa-circle-check text-emerald-600"></i> Why GitHub Pages + Chrome is Best:
-                        </div>
-                        <p>When you open your GitHub Pages link in <b>Google Chrome on Android</b>, Android recognizes the embedded PWA manifest in this code and installs it as a real home-screen app that works with <b>Airplane Mode ON</b>.</p>
-                    </div>
-
-                    <ol class="space-y-4 text-sm text-slate-700">
-                        <li class="flex gap-3">
-                            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
-                            <div>
-                                <strong class="text-slate-900 block">Open Your GitHub Link in Android Chrome</strong>
-                                Type your <code class="bg-gray-100 px-1 rounded text-xs">your-username.github.io/ballistics-app</code> link into Chrome on your Android phone.
-                            </div>
-                        </li>
-                        <li class="flex gap-3">
-                            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
-                            <div>
-                                <strong class="text-slate-900 block">Tap "Add to Home screen" or "Install App"</strong>
-                                Tap the <b>three dots menu (⋮)</b> in the top-right corner of Chrome and select <b>"Add to Home screen"</b> (or <b>"Install app"</b>).
-                            </div>
-                        </li>
-                        <li class="flex gap-3">
-                            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
-                            <div>
-                                <strong class="text-slate-900 block">Launch from Your Home Screen!</strong>
-                                A custom crosshair app icon named <b>Ballistics</b> will appear on your phone's home screen. Open it anytime—even with zero cell service in the woods!
-                            </div>
-                        </li>
-                    </ol>
+                    <p>When you open this app in <b>Google Chrome on Android</b> (or Safari on iPhone) and add it to your Home Screen, your phone installs it as a standalone app with all 32+ ammo loads and custom profiles saved locally on your device.</p>
                 </div>
+
+                <ol class="space-y-4 text-sm text-slate-700">
+                    <li class="flex gap-3">
+                        <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">1</span>
+                        <div>
+                            <strong class="text-slate-900 block">Open the App in Your Phone's Browser</strong>
+                            Open this page in <b>Google Chrome</b> on your Android phone (or <b>Safari</b> on iOS).
+                        </div>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">2</span>
+                        <div>
+                            <strong class="text-slate-900 block">Tap "Add to Home screen" or "Install App"</strong>
+                            Tap the <b>three dots menu (⋮)</b> in the top-right corner of Chrome and select <b>"Install app"</b> or <b>"Add to Home screen"</b> (on iPhone, tap the <b>Share</b> button at the bottom and tap <b>"Add to Home Screen"</b>).
+                        </div>
+                    </li>
+                    <li class="flex gap-3">
+                        <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">3</span>
+                        <div>
+                            <strong class="text-slate-900 block">Launch Anytime from Your Home Screen!</strong>
+                            A custom crosshair app icon named <b>Ballistics</b> will appear on your phone's home screen. Open it anytime—even with zero cell service in the woods or at the range!
+                        </div>
+                    </li>
+                </ol>
             </div>
         </section>
 
@@ -2119,37 +514,37 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
 
     <!-- Mobile Bottom Navigation Bar -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 text-slate-400 border-t border-slate-800 flex justify-around items-center py-2 z-40">
-        <button onclick="switchTab('calc-view')" id="nav-calc-mobile" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-white text-xs py-1 px-4">
+        <button onclick="switchTab('calc-view')" id="nav-calc-mobile" class="flex flex-col items-center gap-0.5 text-orange-400 font-semibold text-xs py-1 px-4">
             <i class="fa-solid fa-calculator text-base"></i>
             <span>Solver</span>
         </button>
-        <button onclick="switchTab('profiles-view')" id="nav-profiles-mobile" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-white text-xs py-1 px-4">
+        <button onclick="switchTab('profiles-view')" id="nav-profiles-mobile" class="flex flex-col items-center gap-0.5 hover:text-white text-xs py-1 px-4">
             <i class="fa-solid fa-book-bookmark text-base"></i>
             <span>Library</span>
         </button>
-        <button onclick="switchTab('guide-view')" id="nav-guide-mobile" class="flex flex-col items-center gap-0.5 text-orange-400 font-semibold text-xs py-1 px-4">
+        <button onclick="switchTab('guide-view')" id="nav-guide-mobile" class="flex flex-col items-center gap-0.5 hover:text-white text-xs py-1 px-4">
             <i class="fa-brands fa-android text-base text-emerald-400"></i>
-            <span>Phone &amp; GitHub</span>
+            <span>Phone App</span>
         </button>
     </nav>
 
     <!-- ================= MODALS ================= -->
     <!-- Save Profile Modal -->
-    <div id="saveModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+    <div id="saveModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden transform transition-all">
             <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-gray-900" id="saveModalTitle">Save Weapon Profile</h3>
+                <h3 class="text-lg font-bold text-gray-900" id="saveModalTitle">Save Profile</h3>
                 <button onclick="closeSaveModal()" class="text-gray-400 hover:text-gray-500 focus:outline-none">
                     <i class="fa-solid fa-times text-xl"></i>
                 </button>
             </div>
             <div class="p-4 space-y-4">
-                <p class="text-sm text-gray-600" id="saveModalDesc">Saves your current Zero Range, Sight Height, Max Distance, and Distance Step.</p>
+                <p class="text-sm text-gray-600" id="saveModalDesc">Enter a name for this profile.</p>
                 <div class="input-group">
                     <label for="profileName">Profile Name</label>
                     <input type="text" id="profileName" placeholder="e.g. My Custom Setup" class="w-full">
                 </div>
-                <input type="hidden" id="savingProfileType" value="weapon">
+                <input type="hidden" id="savingProfileType" value="">
             </div>
             <div class="bg-gray-50 px-4 py-3 border-t border-gray-200 flex justify-end gap-2">
                 <button onclick="closeSaveModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50">
@@ -2186,9 +581,9 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="fixed bottom-16 md:bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg transition-opacity duration-300 pointer-events-none z-50 flex items-center gap-2 border border-slate-700 opacity-0">
+    <div id="toast" class="fixed bottom-16 md:bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50 flex items-center gap-2 border border-slate-700">
         <i id="toastIcon" class="fa-solid fa-check-circle text-emerald-400"></i>
-        <span id="toastMessage" class="text-sm font-medium">Backup JSON downloaded!</span>
+        <span id="toastMessage" class="text-sm font-medium">Notification</span>
     </div>
 
     <script>
@@ -3558,5 +1953,5 @@ url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMExce
             setTimeout(init, 1);
         }
     </script>
-
-</body></html>
+</body>
+</html>
